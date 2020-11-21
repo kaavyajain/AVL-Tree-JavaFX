@@ -183,7 +183,7 @@ class AVLView extends Pane {
       getChildren().add(t);
   }
   public final void setHeight(String h){
-      Text t = new Text(350, 20, h);
+      Text t = new Text(370, 20, h);
       t.setFont(Font.font("ARIAL", FontWeight.BOLD,FontPosture.REGULAR, 15));
       t.setFill(Color.rgb(255,246,241));
       getChildren().add(t);
@@ -222,7 +222,9 @@ protected void displayAVLTree(AVLNode root, double x, double y, double hGap){
         circle.setFill(Color.rgb(255,214,70));
         circle.setStroke(Color.rgb(8,91,185));
         circle.setStrokeWidth(5.0f);
-        getChildren().addAll(circle, new Text(x - 4, y + 4, root.element + ""));
+        Text node = new Text(x - 4, y + 4, root.element + "");
+        node.setStyle("-fx-font-size: 15");
+        getChildren().addAll(circle, node);
     }
  
  }
