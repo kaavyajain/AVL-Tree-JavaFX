@@ -26,11 +26,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-
+import javafx.scene.text.FontPosture; 
+import javafx.scene.text.FontWeight;
 
 public class AVL_Main extends Application { 
-
-    // launch the application 
     @Override
     public void start(Stage s) 
     {   
@@ -44,62 +43,101 @@ public class AVL_Main extends Application {
         VBox vbox = new VBox();
         vbox.setPadding(new Insets(15, 15, 15, 15));
         vbox.setSpacing(20);
-        vbox.setStyle("-fx-background-color: #336699;");
+        vbox.setStyle("-fx-background-color: #081856;");
         
-        TextField value = new TextField("Insert int value");
+        TextField value = new TextField("Type int");
+        value.setMaxWidth(130);
         value.setStyle("-fx-text-fill: black");
         value.setFont(new Font("ARIAL", 14));
         value.setAlignment(Pos.CENTER);
         Button insert = new Button("Insert");
-        insert.setPrefSize(100, 30);
+        insert.setPrefSize(100, 40);
+        insert.setStyle("-fx-font-size:14");
         Button delete= new Button("Delete");
-        delete.setPrefSize(100, 30);
+        delete.setPrefSize(100, 40);
+        delete.setStyle("-fx-font-size:14");
         Button find= new Button("Find\n");
-        find.setPrefSize(100, 30);
-        Label print = new Label("Print -> \n");
-        print.setTextFill(Color.WHITE);
+        find.setPrefSize(100, 40);
+        find.setStyle("-fx-font-size:14");
+        Label print = new Label("Print : \n");
+        print.setStyle("-fx-font-weight: bold");
+        print.setTextFill(Color.rgb(255,214,70));
         print.setFont(new Font("ARIAL",15));
         Button preorder= new Button("PreOrder");
-        preorder.setPrefSize(100, 30);
+        preorder.setPrefSize(100, 40);
+        preorder.setStyle("-fx-font-size:14");
         Button inorder= new Button("InOrder");
-        inorder.setPrefSize(100, 30);
+        inorder.setPrefSize(100, 40);
+        inorder.setStyle("-fx-font-size:14");
         Button postorder= new Button("PostOrder");
-        postorder.setPrefSize(100, 30);
-        Label status = new Label("\nTree status will be displayed here."+"\nHeight:"+"\nVertices:");
-       
-        status.setTextFill(Color.WHITE);
-        status.setFont(new Font("ARIAL",15));
+        postorder.setPrefSize(100, 40);
+        postorder.setStyle("-fx-font-size:14");
+        Label lb = new Label("HAPPY TRAVERSING!");
+        lb.setStyle("-fx-font-weight: bold;");
+        lb.setTextFill(Color.rgb(255,214,70));
+        lb.setFont(new Font("ARIAL",15));
         insert.setOnAction((ActionEvent e) -> {
             int key = Integer.parseInt(value.getText());
             if (tree.search(key)) { // key is in the tree already
                 view.displayAVLTree();
                 view.setStatus(key + " is already in the tree");
+                view.setHeight("Height: "+tree.height(tree.getRoot()));
+                view.setVertices("No. of vertices: "+tree.countNodes());
+                value.clear();
             } else {
                 tree.insert(key); // Insert a new key
                 view.displayAVLTree();
                 view.setStatus(key + " is inserted in the tree");
+                view.setHeight("Height: "+tree.height(tree.getRoot()));
+                view.setVertices("No. of vertices: "+tree.countNodes());
+                value.clear();
             }
         });
 
- delete.setOnAction(e -> {
- int key = Integer.parseInt(value.getText());
- if (!tree.search(key)) { // key is not in the tree
- view.displayAVLTree();
- view.setStatus(key + " is not in the tree");
- } else {
- tree.delete(key); // Delete a key
- view.displayAVLTree();
- view.setStatus(key + " is deleted from the tree");
- }
- });
+        delete.setOnAction(e -> {
+            int key = Integer.parseInt(value.getText());
+            if (!tree.search(key)) { // key is not in the tree
+                view.displayAVLTree();
+                view.setStatus(key + " is not in the tree");
+                view.setHeight("Height: "+tree.height(tree.getRoot()));
+                view.setVertices("No. of vertices: "+tree.countNodes());
+                value.clear();
+            } else {
+                tree.delete(key); // Delete a key
+                view.displayAVLTree();
+                view.setStatus(key + " is deleted from the tree");
+                view.setHeight("Height: "+tree.height(tree.getRoot()));
+                view.setVertices("No. of vertices: "+tree.countNodes());
+                value.clear();
+            }
+        });
+ 
+        find.setOnAction(e -> {
+            int key = Integer.parseInt(value.getText());
+            if(!tree.search(key)){
+                view.setStatus(key+" is not found in tree.");
+                view.setHeight("Height: "+tree.height(tree.getRoot()));
+                view.setVertices("No. of vertices: "+tree.countNodes());
+                value.clear();
+            } else{
+ 
+            }
+ 
+        });
+        
+        inorder.setOnAction(e -> {
+        //view.setStatus(tree.inorder(tree.getRoot())+"");
+        view.setStatus("hi");
+        });
+ 
       
-        vbox.getChildren().addAll(value, insert, delete, find, print, preorder, inorder, postorder,status);
+        vbox.getChildren().addAll(value, insert, delete, find, print, preorder, inorder, postorder,lb);
         vbox.setAlignment(Pos.CENTER);
 		
         bp.setRight(vbox);
-        bp.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+        bp.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
 	Alert a = new Alert(AlertType.INFORMATION); 
-        Scene sc = new Scene(bp, 1000, 600, Color.GREEN); 
+        Scene sc = new Scene(bp, 1000, 600); 
 	// set the scene 
 	s.setScene(sc); 
 	s.show(); 
@@ -125,71 +163,71 @@ public class AVL_Main extends Application {
 		Application.launch(args); 
 	} 
  
-}
+
 
 class AVLView extends Pane {
   private AVLTree tree = new AVLTree();
-  private double radius = 30; // Tree node radius
-  private double vGap = 40; // Gap between two levels in a tree
+  public double radius = 25; // Tree node radius
+  private double vGap = 70; // Gap between two levels in a tree
   AVLView(AVLTree tree) {
   this.tree = tree;
   setStatus("Tree is empty");
+  setHeight("Height: 0");
+  setVertices("No. of vertices: 0");
   }
 
   public final void setStatus(String msg) {
-     
-    
-      getChildren().add(new Text(10, 10, msg));
+      Text t = new Text(20, 20, msg);
+      t.setFont(Font.font("ARIAL", FontWeight.BOLD,FontPosture.REGULAR, 15));
+      t.setFill(Color.rgb(255,246,241));
+      getChildren().add(t);
   }
+  public final void setHeight(String h){
+      Text t = new Text(350, 20, h);
+      t.setFont(Font.font("ARIAL", FontWeight.BOLD,FontPosture.REGULAR, 15));
+      t.setFill(Color.rgb(255,246,241));
+      getChildren().add(t);
+  }
+   public final void setVertices(String v){
+   Text t = new Text(680, 20, v);
+   t.setFont(Font.font("ARIAL", FontWeight.BOLD,FontPosture.REGULAR, 15));
+   t.setFill(Color.rgb(255,246,241));
+   getChildren().add(t);
+  }
+  
 public void displayAVLTree(){
-        this.getChildren().clear();
-        if(tree.getRoot() != null){
-            displayAVLTree(tree.getRoot(), getWidth() / 2, vGap, getWidth() / 4, Color.SEAGREEN);
-        }
+    this.getChildren().clear();
+    if(tree.getRoot() != null){
+        displayAVLTree(tree.getRoot(), getWidth() / 2, vGap, getWidth() / 4);
     }
-    protected void displayAVLTree(AVLNode root, double x, double y, double hGap, Color color){
+}
+protected void displayAVLTree(AVLNode root, double x, double y, double hGap){
         if(root.left != null){
-            getChildren().add(new Line(x - hGap, y + vGap, x, y));
-            displayAVLTree(root.left, x - hGap, y + vGap, hGap / 2,color);
-        }
-
-        if (root.right != null){
-            getChildren().add(new Line(x + hGap, y + vGap, x, y));
-            displayAVLTree(root.right, x + hGap, y + vGap, hGap / 2, color);
-        }
-
-        Circle circle = new Circle(x, y, radius);
-        circle.setFill(color);
-        circle.setStroke(Color.BLACK);
-        getChildren().addAll(circle, new Text(x - 4, y + 4, root.element + ""));
-    }
- /** Display a subtree rooted at position (x, y) */
-  private void displayAVLTree(AVLNode root,
-                                double x, double y, double hGap) {
-        if (root.left != null) {
-            // Draw a line to the left node
-            getChildren().add(new Line(x - hGap, y + vGap, x, y));
-            // Draw the left subtree recursively
+            Line l = new Line(x - hGap, y + vGap, x, y);
+            l.setStroke(Color.rgb(8,91,185));
+            l.setStrokeWidth(5.0f);
+            getChildren().add(l);
             displayAVLTree(root.left, x - hGap, y + vGap, hGap / 2);
         }
 
-        if (root.right != null) {
-            // Draw a line to the right node
-            getChildren().add(new Line(x + hGap, y + vGap, x, y));
-            // Draw the right subtree recursively
+        if (root.right != null){
+            Line l = new Line(x + hGap, y + vGap, x, y);
+            l.setStroke(Color.rgb(8,91,185));
+            l.setStrokeWidth(5.0f);
+            getChildren().add(l);
             displayAVLTree(root.right, x + hGap, y + vGap, hGap / 2);
         }
 
-        // Display a node
         Circle circle = new Circle(x, y, radius);
-        circle.setFill(Color.CYAN);
-        circle.setStroke(Color.BLACK);
-        getChildren().addAll(circle,
-                new Text(x - 4, y + 4, root.element + ""));
+        circle.setFill(Color.rgb(255,214,70));
+        circle.setStroke(Color.rgb(8,91,185));
+        circle.setStrokeWidth(5.0f);
+        getChildren().addAll(circle, new Text(x - 4, y + 4, root.element + ""));
     }
+ 
  }
     
-   
+} 
     
 
 
@@ -509,8 +547,9 @@ class AVLNode
      public void inorder()
      {
          inorder(root);
+         
      }
-     private void inorder(AVLNode r)
+     public void inorder(AVLNode r)
      {
          if (r != null)
          {
@@ -518,13 +557,15 @@ class AVLNode
              System.out.print(r.element +" ");
              inorder(r.right);
          }
+         
      }
      /* Function for preorder traversal */
-     public void preorder()
+     public String preorder()
      {
          preorder(root);
+         return "Tree: ";
      }
-     private void preorder(AVLNode r)
+     public void preorder(AVLNode r)
      {
          if (r != null)
          {
@@ -537,8 +578,9 @@ class AVLNode
      public void postorder()
      {
          postorder(root);
+         
      }
-     private void postorder(AVLNode r)
+     public void postorder(AVLNode r)
      {
          if (r != null)
          {
