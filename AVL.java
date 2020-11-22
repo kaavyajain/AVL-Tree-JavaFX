@@ -10,7 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.*; 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*; 
 import javafx.stage.Stage; 
 import javafx.scene.text.Font;
@@ -22,21 +21,23 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.FontPosture; 
 import javafx.scene.text.FontWeight;
 import java.util.ArrayList;
-
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 /**
  *
- * @author kaavk
+ * @author Kaavya Jain
  */
 public class AVL extends Application {
   @Override
     public void start(Stage s) 
     {     
-        AVLTree tree = new AVLTree();
+        AVLTree tree = new AVLTree();//create a tree
         BorderPane bp = new BorderPane();
         AVLView view = new AVLView(tree); // Create a BTView
         bp.setCenter(view);
     
         s.setTitle("AVL Tree Visualization");
+        s.setResizable(false);
       
         VBox vbox = new VBox();
         vbox.setPadding(new Insets(15, 15, 15, 15));
@@ -101,7 +102,27 @@ public class AVL extends Application {
 	a.setContentText("This AVL Tree simulation is created by Kaavya Jain and Prakriti Agrawal for CSD203.\nIt can perform insertion, deletion, search and print the tree according to the chosen traversal."); 
 	// show the dialog 
 	a.show();
+        //insert function is performed when the insert button is pressed.
         insert.setOnAction((ActionEvent e) -> {
+            int key = Integer.parseInt(value.getText());
+            if (tree.search(key)) { // key is in the tree already
+                view.displayAVLTree();
+                view.setStatus(key + " is already in the tree");
+                view.setHeight("Height: "+tree.height(tree.getRoot()));
+                view.setVertices("No. of vertices: "+tree.countNodes());
+                value.clear();//clear the textfield
+            } else {
+                tree.insert(key); // Insert a new key
+                view.displayAVLTree();
+                view.setStatus(key + " is inserted in the tree");
+                view.setHeight("Height: "+tree.height(tree.getRoot()));
+                view.setVertices("No. of vertices: "+tree.countNodes());
+                value.clear();//clear the textfield
+            }
+        });
+        //if ENTER key is pressed on the value textfield, then the input is inserted in the tree, if there is any.
+        value.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode()==(KeyCode.ENTER)) {
             int key = Integer.parseInt(value.getText());
             if (tree.search(key)) { // key is in the tree already
                 view.displayAVLTree();
@@ -117,8 +138,9 @@ public class AVL extends Application {
                 view.setVertices("No. of vertices: "+tree.countNodes());
                 value.clear();
             }
+            }
         });
-
+        //delete function is performed when the delete button is pressed.
         delete.setOnAction(e -> {
             int key = Integer.parseInt(value.getText());
             if (!tree.search(key)) { // key is not in the tree
@@ -136,14 +158,16 @@ public class AVL extends Application {
                 value.clear();
             }
         });
- 
+       //find function is performed when the find button is pressed.
+       //an alert is popped to show the output
         find.setOnAction((ActionEvent e) -> {
             int key = Integer.parseInt(value.getText());
             Alert fi = new Alert(Alert.AlertType.INFORMATION);
-            fi.setHeaderText("SEARCH: "+key);
+            fi.setHeaderText("SEARCH : "+key);
             fi.setTitle("Search Output");
             if(!tree.search(key)){
                 view.displayAVLTree();
+                view.setStatus(key+" not found");
                 fi.setContentText(key+" is not present in the tree.");
                 view.setHeight("Height: "+tree.height(tree.getRoot()));
                 view.setVertices("No. of vertices: "+tree.countNodes());
@@ -151,6 +175,7 @@ public class AVL extends Application {
                 fi.show();
             } else{
                 view.displayAVLTree();
+                view.setStatus(key+" found");
                 fi.setContentText(key+" is present in the tree.");
                 view.setHeight("Height: "+tree.height(tree.getRoot()));
                 view.setVertices("No. of vertices: "+tree.countNodes());
@@ -159,7 +184,9 @@ public class AVL extends Application {
             }
             
         });
-        
+
+        //inorder traversal
+        //an alert is popped to show the output
         inorder.setOnAction((ActionEvent e) ->{
         view.displayAVLTree();
         view.setStatus("Inorder Traversal printed.");
@@ -168,11 +195,12 @@ public class AVL extends Application {
         Alert in = new Alert(Alert.AlertType.INFORMATION);
         in.setHeaderText("INORDER:");
         in.setTitle("Inorder Output");
-        ArrayList list = new ArrayList();
-        in.setContentText((tree.inorder(tree.getRoot(), list)).toString());
+        ArrayList list = new ArrayList();//list to store the elements
+        in.setContentText((tree.inorder(tree.getRoot(), list)).toString());//convert the list to string and display as content
         in.show();
         });
-        
+        //preorder traversal
+        //an alert is popped to show the output
         preorder.setOnAction((ActionEvent e) ->{
         view.displayAVLTree();
         view.setStatus("Preorder Traversal printed.");
@@ -181,11 +209,12 @@ public class AVL extends Application {
         Alert pre = new Alert(Alert.AlertType.INFORMATION);
         pre.setHeaderText("PREORDER:");
         pre.setTitle("Preorder Output");
-        ArrayList list = new ArrayList();
-        pre.setContentText((tree.preorder(tree.getRoot(), list)).toString());
+        ArrayList list = new ArrayList();//list to store the elements
+        pre.setContentText((tree.preorder(tree.getRoot(), list)).toString());//convert the list to string and display as content
         pre.show();
         });
-                
+        //postorder traversal
+        //an alert is popped to show the output      
         postorder.setOnAction((ActionEvent e) ->{
         view.displayAVLTree();
         view.setStatus("Postorder Traversal printed.");
@@ -194,8 +223,8 @@ public class AVL extends Application {
         Alert post = new Alert(Alert.AlertType.INFORMATION);
         post.setHeaderText("POSTORDER:");
         post.setTitle("Postorder Output");
-        ArrayList list = new ArrayList();
-        post.setContentText((tree.postorder(tree.getRoot(), list)).toString());
+        ArrayList list = new ArrayList();//list to store the elements
+        post.setContentText((tree.postorder(tree.getRoot(), list)).toString());//convert the list to string and display as content
         post.show();
         });
     }
@@ -214,7 +243,7 @@ class AVLView extends Pane {
   AVLView(AVLTree tree) {
   this.tree = tree;
   setStatus("Tree is empty");
-  setHeight("Height: 0");
+  setHeight("Height: -1");
   setVertices("No. of vertices: 0");
   }
   public final void setStatus(String msg) {
@@ -242,6 +271,7 @@ public void displayAVLTree(){
         displayAVLTree(tree.getRoot(), getWidth() / 2, vGap, getWidth() / 4);
     }
 }
+//to display the node tree accordingly
 protected void displayAVLTree(AVLTree.Node root, double x, double y, double hGap){
         if(root.left != null){
             Line l = new Line(x - hGap, y + vGap, x, y);
@@ -269,6 +299,7 @@ protected void displayAVLTree(AVLTree.Node root, double x, double y, double hGap
     }
  
  }
+//class containing all functions performed on tree
 class AVLTree {
     
     public Node root;
@@ -505,31 +536,29 @@ class AVLTree {
             node.height = 1 + Math.max(height(node.left), height(node.right));
         }
     }
-        public  ArrayList inorder(Node r,ArrayList l){ 
-       if (r != null) {
-       inorder(r.left,l);
-       l.add(r.key);
-       inorder(r.right,l);
+    public  ArrayList inorder(Node r,ArrayList l){ 
+        if (r != null) {
+            inorder(r.left,l);
+            l.add(r.key);
+            inorder(r.right,l);
+        }
+        return l;
+ }
+    public  ArrayList preorder(Node r,ArrayList l){ 
+        if (r != null) {
+            l.add(r.key);
+            inorder(r.left,l);
+            inorder(r.right,l);
        }
        return l;
  }
-           public  ArrayList preorder(Node r,ArrayList l){ 
-       if (r != null) {
-           l.add(r.key);
-       inorder(r.left,l);
-       
-       inorder(r.right,l);
-       }
-       return l;
- }
-              public  ArrayList postorder(Node r,ArrayList l){ 
-       if (r != null) {
-       inorder(r.left,l);
-       
-       inorder(r.right,l);
-       l.add(r.key);
-       }
-       return l;
+    public  ArrayList postorder(Node r,ArrayList l){ 
+        if (r != null) {
+            inorder(r.left,l);
+            inorder(r.right,l);
+            l.add(r.key);
+        }
+        return l;
  }
 
 }
