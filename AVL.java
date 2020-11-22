@@ -4,10 +4,10 @@
  * and open the template in the editor.
  */
 package avl;
-
+import java.util.List;  
+import java.util.stream.Collectors; 
 import javafx.application.Application; 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Button; 
 import javafx.scene.layout.*; 
 import javafx.geometry.Insets;
@@ -24,6 +24,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.FontPosture; 
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import java.util.ArrayList;
 
 /**
  *
@@ -140,6 +141,7 @@ public class AVL extends Application {
         });
  
         find.setOnAction((ActionEvent e) -> {
+            vbox.getChildren().add(lb);
             int key = Integer.parseInt(value.getText());
             if(!tree.search(key)){
                 view.displayAVLTree();
@@ -152,14 +154,43 @@ public class AVL extends Application {
             }
         });
         
-        postorder.setOnAction(e -> {
-        //view.setStatus(tree.inorder(tree.getRoot())+"");
+        inorder.setOnAction((ActionEvent e) ->{
         view.displayAVLTree();
-        view.setPrint();
-        
+        view.setStatus("Inorder Traversal printed.");
+        view.setHeight("Height: "+tree.height(tree.getRoot()));
+        view.setVertices("No. of vertices: "+tree.countNodes());
+        Alert in = new Alert(Alert.AlertType.INFORMATION);
+        in.setHeaderText("INORDER:");
+        ArrayList list = new ArrayList();
+        in.setContentText((tree.inorder(tree.getRoot(), list)).toString());
+        in.show();
         });
-  
-        }
+        
+        preorder.setOnAction((ActionEvent e) ->{
+        view.displayAVLTree();
+        view.setStatus("Preorder Traversal printed.");
+        view.setHeight("Height: "+tree.height(tree.getRoot()));
+        view.setVertices("No. of vertices: "+tree.countNodes());
+        Alert pre = new Alert(Alert.AlertType.INFORMATION);
+        pre.setHeaderText("PREORDER:");
+        ArrayList list = new ArrayList();
+        pre.setContentText((tree.preorder(tree.getRoot(), list)).toString());
+        pre.show();
+        });
+                
+        postorder.setOnAction((ActionEvent e) ->{
+        view.displayAVLTree();
+        view.setStatus("Postorder Traversal printed.");
+        view.setHeight("Height: "+tree.height(tree.getRoot()));
+        view.setVertices("No. of vertices: "+tree.countNodes());
+        Alert post = new Alert(Alert.AlertType.INFORMATION);
+        post.setHeaderText("POSTORDER:");
+        ArrayList list = new ArrayList();
+        post.setContentText((tree.postorder(tree.getRoot(), list)).toString());
+        post.show();
+        });
+    }
+        
 	public static void main(String args[]) 
 	{ 
 		// launch the application 
@@ -170,19 +201,12 @@ public class AVL extends Application {
 class AVLView extends Pane {
   private AVLTree tree = new AVLTree();
   public double radius = 25; // Tree node radius
-  private final double vGap = 70; // Gap between two levels in a tree
+  private final double vGap = 90; // Gap between two levels in a tree
   AVLView(AVLTree tree) {
   this.tree = tree;
   setStatus("Tree is empty");
   setHeight("Height: 0");
   setVertices("No. of vertices: 0");
-  }
-  public final void setPrint(){
-      Text t = new Text("");
-      tree.printPostorder(tree.getRoot());
-      t.setFont(Font.font("ARIAL", FontWeight.BOLD,FontPosture.REGULAR, 15));
-      t.setFill(Color.rgb(255,246,241));
-      getChildren().add(t);
   }
   public final void setStatus(String msg) {
       Text t = new Text(20, 20, msg);
@@ -229,7 +253,7 @@ protected void displayAVLTree(AVLTree.Node root, double x, double y, double hGap
         Circle circle = new Circle(x, y, radius);
         circle.setFill(Color.rgb(255,214,70));
         circle.setStroke(Color.rgb(8,91,185));
-        circle.setStrokeWidth(5.0f);
+        circle.setStrokeWidth(4.0f);
         Text node = new Text(x - 4, y + 4, root.key + "");
         node.setStyle("-fx-font-size: 15");
         getChildren().addAll(circle, node);
@@ -237,9 +261,8 @@ protected void displayAVLTree(AVLTree.Node root, double x, double y, double hGap
  
  }
 class AVLTree {
- 
+    
     public Node root;
- 
     public static class Node {
         public int key;
         public int balance;
@@ -484,28 +507,25 @@ class AVLTree {
             node.height = 1 + Math.max(height(node.left), height(node.right));
         }
     }
-	String printPostorder(Node node) 
+	void printPostorder(Node node) 
 	{ 
 		
-                if (node!=null)
-                {
-                    // first recur on left subtree
-                    printPostorder(node.left);
+               if (node == null) 
+                return ;
+               /* then print the data of node */
+		System.out.print(node.key + " "); 
+                // first recur on left subtree
+                printPostorder(node.left);
 		// then recur on right subtree 
 		printPostorder(node.right); 
                 
-		// now deal with the node 
-		return node.key + " "; 
-                }
-                else
-                return "Please enter node values.";
 	} 
 
 	/* Given a binary tree, print its nodes in inorder*/
-	void printInorder(Node node) 
+	String printInorder(Node node) 
 	{ 
 		if (node == null) 
-                {
+                return "Nothing in tree.";
 		/* first recur on left child */
 		printInorder(node.left); 
 
@@ -514,14 +534,43 @@ class AVLTree {
 
 		/* now recur on right child */
 		printInorder(node.right);
-                }
+                return "";
 	} 
+        public  ArrayList inorder(Node r,ArrayList l){ 
+       if (r != null) {
+       inorder(r.left,l);
+       l.add(r.key);
+       inorder(r.right,l);
+       }
+       return l;
+ }
+           public  ArrayList preorder(Node r,ArrayList l){ 
+       if (r != null) {
+           l.add(r.key);
+       inorder(r.left,l);
+       
+       inorder(r.right,l);
+       }
+       return l;
+ }
+              public  ArrayList postorder(Node r,ArrayList l){ 
+       if (r != null) {
+       inorder(r.left,l);
+       
+       inorder(r.right,l);
+       l.add(r.key);
+       }
+       return l;
+ }
+
+        
+
 
 	/* Given a binary tree, print its nodes in preorder*/
-	void printPreorder(Node node) 
+	String printPreorder(Node node) 
 	{ 
 		if (node == null) 
-			return; 
+			return "Nothing in tree."; 
 
 		/* first print data of node */
 		System.out.print(node.key + " "); 
@@ -531,6 +580,7 @@ class AVLTree {
 
 		/* now recur on right subtree */
 		printPreorder(node.right); 
+                return"\n Tree printed.";
 	}
 }
 
