@@ -4,8 +4,6 @@
  * and open the template in the editor.
  */
 package avl;
-import java.util.List;  
-import java.util.stream.Collectors; 
 import javafx.application.Application; 
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button; 
@@ -23,7 +21,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.FontPosture; 
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 import java.util.ArrayList;
 
 /**
@@ -141,17 +138,26 @@ public class AVL extends Application {
         });
  
         find.setOnAction((ActionEvent e) -> {
-            vbox.getChildren().add(lb);
             int key = Integer.parseInt(value.getText());
+            Alert fi = new Alert(Alert.AlertType.INFORMATION);
+            fi.setHeaderText("SEARCH: "+key);
+            fi.setTitle("Search Output");
             if(!tree.search(key)){
                 view.displayAVLTree();
-                view.setStatus(key+" is not found in tree.");
+                fi.setContentText(key+" is not present in the tree.");
                 view.setHeight("Height: "+tree.height(tree.getRoot()));
                 view.setVertices("No. of vertices: "+tree.countNodes());
                 value.clear();
+                fi.show();
             } else{
-                
+                view.displayAVLTree();
+                fi.setContentText(key+" is present in the tree.");
+                view.setHeight("Height: "+tree.height(tree.getRoot()));
+                view.setVertices("No. of vertices: "+tree.countNodes());
+                value.clear();
+                fi.show();
             }
+            
         });
         
         inorder.setOnAction((ActionEvent e) ->{
@@ -161,6 +167,7 @@ public class AVL extends Application {
         view.setVertices("No. of vertices: "+tree.countNodes());
         Alert in = new Alert(Alert.AlertType.INFORMATION);
         in.setHeaderText("INORDER:");
+        in.setTitle("Inorder Output");
         ArrayList list = new ArrayList();
         in.setContentText((tree.inorder(tree.getRoot(), list)).toString());
         in.show();
@@ -173,6 +180,7 @@ public class AVL extends Application {
         view.setVertices("No. of vertices: "+tree.countNodes());
         Alert pre = new Alert(Alert.AlertType.INFORMATION);
         pre.setHeaderText("PREORDER:");
+        pre.setTitle("Preorder Output");
         ArrayList list = new ArrayList();
         pre.setContentText((tree.preorder(tree.getRoot(), list)).toString());
         pre.show();
@@ -185,6 +193,7 @@ public class AVL extends Application {
         view.setVertices("No. of vertices: "+tree.countNodes());
         Alert post = new Alert(Alert.AlertType.INFORMATION);
         post.setHeaderText("POSTORDER:");
+        post.setTitle("Postorder Output");
         ArrayList list = new ArrayList();
         post.setContentText((tree.postorder(tree.getRoot(), list)).toString());
         post.show();
@@ -448,9 +457,6 @@ class AVLTree {
         }
     }
  
-    public void printBalance() {
-        printBalance(root);
-    }
      public Node getRoot() {
       return root;
      }  
@@ -494,48 +500,11 @@ class AVLTree {
          }
      }
  
-    private void printBalance(Node n) {
-        if (n != null) {
-            printBalance(n.left);
-            System.out.printf("%s ", n.balance);
-            printBalance(n.right);
-        }
-    }
- 
     private void reheight(Node node) {
         if (node != null) {
             node.height = 1 + Math.max(height(node.left), height(node.right));
         }
     }
-	void printPostorder(Node node) 
-	{ 
-		
-               if (node == null) 
-                return ;
-               /* then print the data of node */
-		System.out.print(node.key + " "); 
-                // first recur on left subtree
-                printPostorder(node.left);
-		// then recur on right subtree 
-		printPostorder(node.right); 
-                
-	} 
-
-	/* Given a binary tree, print its nodes in inorder*/
-	String printInorder(Node node) 
-	{ 
-		if (node == null) 
-                return "Nothing in tree.";
-		/* first recur on left child */
-		printInorder(node.left); 
-
-		/* then print the data of node */
-		System.out.print(node.key + " "); 
-
-		/* now recur on right child */
-		printInorder(node.right);
-                return "";
-	} 
         public  ArrayList inorder(Node r,ArrayList l){ 
        if (r != null) {
        inorder(r.left,l);
@@ -563,25 +532,6 @@ class AVLTree {
        return l;
  }
 
-        
-
-
-	/* Given a binary tree, print its nodes in preorder*/
-	String printPreorder(Node node) 
-	{ 
-		if (node == null) 
-			return "Nothing in tree."; 
-
-		/* first print data of node */
-		System.out.print(node.key + " "); 
-
-		/* then recur on left sutree */
-		printPreorder(node.left); 
-
-		/* now recur on right subtree */
-		printPreorder(node.right); 
-                return"\n Tree printed.";
-	}
 }
 
 
