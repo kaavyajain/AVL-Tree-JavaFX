@@ -37,7 +37,8 @@ public class AVL extends Application {
         bp.setCenter(view);
     
         s.setTitle("AVL Tree Visualization");
-        s.setResizable(false);
+        s.setResizable(true);
+	s.setMinWidth(1020);
       
         VBox vbox = new VBox();
         vbox.setPadding(new Insets(15, 15, 15, 15));
