@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package avl;
 import javafx.application.Application; 
 import javafx.event.ActionEvent;
@@ -21,31 +17,33 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.FontPosture; 
 import javafx.scene.text.FontWeight;
 import java.util.ArrayList;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 /**
  *
  * @author Kaavya Jain
  */
+/* Our application of AVL Tree can perform insertion, deletion of a node. 
+Also, find button reports if a particular node is present in the tree or not. 
+The traversal of the AVL Tree are also printed. 
+Options for inorder, preorder, postorder traversal is given.*/
 public class AVL extends Application{
   @Override
     public void start(Stage s) 
     {   
         AVLTree tree = new AVLTree();//create a tree
-        BorderPane bp = new BorderPane();
-        AVLView view = new AVLView(tree); // Create a BTView
-        bp.setCenter(view);
-    
+        BorderPane bp = new BorderPane();//create a borderpane
+        AVLView view = new AVLView(tree); // Create a AVLView
+        bp.setCenter(view);//set the view in centre of borderpane
+        //set properties of stage
         s.setTitle("AVL Tree Visualization");
-        s.setResizable(true);
         s.setMinWidth(1020);
-      
+        //create a vbox
         VBox vbox = new VBox();
         vbox.setPadding(new Insets(15, 15, 15, 15));
         vbox.setSpacing(20);
         vbox.setStyle("-fx-background-color: #081856;");
-        
+        //vbox nodes
         TextField value = new TextField("Type int");
         value.setMaxWidth(130);
         value.setStyle("-fx-text-fill: black");
@@ -77,26 +75,24 @@ public class AVL extends Application{
         lb.setStyle("-fx-font-weight: bold;");
         lb.setTextFill(Color.rgb(255,214,70));
         lb.setFont(new Font("ARIAL",15));
-        
+        //add nodes in vbox
         vbox.getChildren().addAll(value, insert, delete, find, print, preorder, inorder, postorder,lb);
-        vbox.setAlignment(Pos.CENTER);
+        vbox.setAlignment(Pos.CENTER);// set alignment of nodes in vbox in center
 		
-        bp.setRight(vbox);
-        bp.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
-	Alert a = new Alert(Alert.AlertType.INFORMATION); 
+        bp.setRight(vbox);// place vbox in right section of borderpane
+        bp.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));//black background of borderpane
+        //add bp in scene
         Scene sc = new Scene(bp, 1000, 600); 
 	// set the scene 
 	s.setScene(sc); 
-	s.show(); 
-        //add delay
-        try
-        {
-            Thread.sleep(1050);
+	s.show(); //show stage
+        //add delay for 1050 ms, after that, show welcome alert
+        try {Thread.sleep(1050);}
+        catch(InterruptedException ex){
+        Thread.currentThread().interrupt();
         }
-        catch(InterruptedException ex)
-        {
-             Thread.currentThread().interrupt();
-        }
+        //welcome message alert
+	Alert a = new Alert(Alert.AlertType.INFORMATION); 
         //set title
         a.setTitle("Welcome");
         //set header text
@@ -105,16 +101,16 @@ public class AVL extends Application{
 	a.setContentText("This AVL Tree simulation is created by Kaavya Jain and Prakriti Agrawal for CSD203.\nIt can perform insertion, deletion, search and print the tree according to the chosen traversal."); 
 	// show the dialog 
 	a.show();
-             
+        //lambda handlers for buttons  
         //insert function is performed when the insert button is pressed.
         insert.setOnAction((ActionEvent e) -> {           
             if(value.getText().trim().equals("")){
-            tree.invalidInput(value,"No key entered!");
+            invalidInput(value,"No key entered!");
             }
             else{
             try {int key = Integer.parseInt(value.getText());
             if (tree.search(key)) { // key is in the tree already
-                view.displayAVLTree();
+                view.displayAVLTree();//display tree
                 view.setStatus(key + " is already in the tree");
                 view.setHeight("Height: "+tree.height(tree.getRoot()));
                 view.setVertices("No. of vertices: "+tree.countNodes());
@@ -129,11 +125,11 @@ public class AVL extends Application{
             }
             }
             catch (NumberFormatException ex){
-            tree.invalidInput(value,"Key must be an integer");
+            invalidInput(value,"Key must be an integer");
             }
             }
         });
-        
+        //now you can insert using enter key
         //if ENTER key is pressed on the value textfield, then the input is inserted in the tree, if there is any.
         value.setOnKeyPressed(keyEvent -> {           
             try {
@@ -156,17 +152,16 @@ public class AVL extends Application{
             }
             }
             catch (NumberFormatException ex){
-            tree.invalidInput(value,"Key must be an integer");
+            invalidInput(value,"Key must be an integer");
             }           
         });
         
         //delete function is performed when the delete button is pressed.
         delete.setOnAction((ActionEvent e) -> {
             if(value.getText().trim().equals("")){
-            tree.invalidInput(value,"No key entered!");
+            invalidInput(value,"No key entered!");
             }
-            else{
-           
+            else{          
             try {
             int key = Integer.parseInt(value.getText());
             if (!tree.search(key)) { // key is not in the tree
@@ -185,7 +180,7 @@ public class AVL extends Application{
             }
             }
             catch (NumberFormatException ex){
-            tree.invalidInput(value,"Key must be an integer");
+            invalidInput(value,"Key must be an integer");
             }
             }           
         });
@@ -194,7 +189,7 @@ public class AVL extends Application{
        //an alert is popped to show the output
         find.setOnAction((ActionEvent e) -> {
             if(value.getText().trim().equals("")){
-            tree.invalidInput(value,"No key entered!");
+            invalidInput(value,"No key entered!");
             }
             else{        
             try {
@@ -221,7 +216,7 @@ public class AVL extends Application{
             }
             }
             catch(NumberFormatException ex){
-            tree.invalidInput(value,"Key must be an integer");
+            invalidInput(value,"Key must be an integer");
             }
             }           
         });
@@ -270,6 +265,18 @@ public class AVL extends Application{
             post.setContentText((tree.postorder(tree.getRoot(), list)).toString());//convert the list to string and display as content
             post.show();
         });
+            
+   
+    }
+    //invalid input method
+     private void invalidInput(TextField value, String a){
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Warning");
+        alert.setHeaderText(a);
+        alert.setContentText("Please enter an integer in the input box and try again.");
+        value.requestFocus();
+        alert.showAndWait();
+        value.clear();
     }
         
 	public static void main(String args[]) 
@@ -278,7 +285,7 @@ public class AVL extends Application{
 		Application.launch(args); 
 	} 
 }
-
+//AVLView to make the tree and set the status and height and vertices
 class AVLView extends Pane {
   private AVLTree tree = new AVLTree();
   public double radius = 25; // Tree node radius
@@ -314,7 +321,7 @@ public void displayAVLTree(){
         displayAVLTree(tree.getRoot(), getWidth() / 2, vGap, getWidth() / 4);
     }
 }
-//to display the node tree accordingly
+//to display the lines and circles in tree accordingly
 protected void displayAVLTree(AVLTree.Node root, double x, double y, double hGap){
         if(root.left != null){
             Line l = new Line(x - hGap, y + vGap, x, y);
@@ -343,9 +350,7 @@ protected void displayAVLTree(AVLTree.Node root, double x, double y, double hGap
  
  }
 //class containing all functions performed on tree
-class AVLTree {
-   
-    
+class AVLTree {   
     public Node root;
     public static class Node {
         public int key;
@@ -604,14 +609,4 @@ class AVLTree {
         }
         return l;
  }
-    //invalid input alert
-    public void invalidInput(TextField value, String a){
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Warning");
-        alert.setHeaderText(a);
-        alert.setContentText("Please enter an integer in the input box and try again.");
-        value.requestFocus();
-        alert.showAndWait();
-        value.clear();
-    }
 }
